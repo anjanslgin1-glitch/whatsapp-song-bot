@@ -1,5 +1,5 @@
-from flask import Flask
-import os
+from flask import Flask, request
+from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
@@ -7,6 +7,12 @@ app = Flask(__name__)
 def home():
     return "Bot is running OK"
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port)
+@app.route("/whatsapp", methods=["POST"])
+def whatsapp():
+    incoming = request.values.get("Body", "")
+    resp = MessagingResponse()
+    msg = resp.message()
+    msg.body(f"Tumi likhecho: {incoming}")
+    return str(resp)
+
+app.run(host="0.0.0.0", port=3000)
